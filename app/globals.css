@@ -59,3 +59,9 @@ h5 {
 h6 {
   @apply text-h6;
 }
+
+@layer base {
+  * {
+    @apply border-primary-01;
+  }
+}
