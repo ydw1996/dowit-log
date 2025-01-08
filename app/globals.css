@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: theme("colors.basic.white");
-  --foreground: theme("colors.basic.black");
+  --background: theme('colors.basic.white');
+  --foreground: theme('colors.basic.black');
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: theme("colors.bg.dark");
-    --foreground: theme("colors.gray.200");
+    --background: theme('colors.bg.dark');
+    --foreground: theme('colors.gray.200');
   }
 }
 
@@ -66,24 +66,23 @@ h6 {
   }
 }
 
-
 .prose {
-  @apply text-gray-300 
+  @apply text-gray-300;
 }
 .prose h1 {
-  @apply text-gray-300 text-h1 font-bold mt-8 mb-4;
+  @apply text-gray-300 text-h2 font-bold mt-8 mb-4 leading-[54px] break-keep;
 }
 
 .prose h2 {
-  @apply text-gray-300 text-h2 font-semibold mt-6 mb-3;
+  @apply text-gray-300 text-h3 font-semibold mt-6 mb-3;
 }
 
 .prose h3 {
-  @apply text-gray-300 text-h3 font-semibold mt-5 mb-2;
+  @apply text-gray-300 text-h4 font-semibold mt-5 mb-2;
 }
 
 .prose a {
-  @apply text-primary-02 text-h3 font-semibold mt-5 mb-2;
+  @apply text-primary-02 text-h4 font-semibold mt-5 mb-2;
 }
 
 .prose p {
@@ -91,11 +90,13 @@ h6 {
 }
 
 .prose strong {
-  @apply text-gray-300
+  @apply text-gray-300;
 }
 
-.prose tbody th {
-  @apply text-gray-300
+.prose table th,
+.prose table td,
+.prose table tr {
+  @apply text-gray-300; /* 테이블 헤더와 셀 텍스트 색상 */
 }
 
 /* .prose pre {
@@ -114,7 +115,6 @@ h6 {
 .prose li {
   @apply mt-1 mb-1;
 }
-
 
 .prose img {
   @apply mx-auto my-6 max-h-96 rounded-lg shadow-lg;
