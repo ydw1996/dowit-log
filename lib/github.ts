@@ -4,7 +4,7 @@ export const fetchMarkdownFiles = async () => {
     return fetch(apiUrl, {
         headers: {
             Accept: 'application/vnd.github.v3+json',
-            Authorization: `token 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`, // 환경 변수 사용
+            Authorization: `token ${process.env.GITHUB_TOKEN}`, // 환경 변수 사용
         },
     })
         .then((response) => {
