@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# 환경 변수 파일 무시
+.env.local
+
 # vercel
 .vercel
 

@@ -1,18 +1,15 @@
-import { getPostDetailBySlug, getSortedPostsData } from '@/lib/posts';
+import { getPostDetailBySlug } from '@/lib/posts';
 
-type Params = { params: Promise<{ slug: string }> };
+const BlogDetailPage = async ({ params }: { params: { slug: string } }) => {
+    const { slug } = params;
 
-export const generateStaticParams = async () => {
-    const posts = getSortedPostsData();
-    return posts.map((post) => ({ slug: post.slug }));
-};
-
-const PostDetailPage = async ({ params }: Params) => {
-    const { slug } = await params;
-    const { id = '', title = '', contentHtml = '', date = '', prevPost, nextPost } =
+    // 슬러그를 사용하여 게시물 데이터 가져오기
+    const { id = '', title = '', contentHtml = '', date = '' } =
         (await getPostDetailBySlug(decodeURIComponent(slug))) || {};
 
-    if (!id) return <div>글을 불러올 수 없습니다.</div>;
+    if (!id) {
+        return <div>글을 불러올 수 없습니다.</div>;
+    }
 
     return (
         <article>
@@ -24,10 +21,9 @@ const PostDetailPage = async ({ params }: Params) => {
                         <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
                     </section>
                 </div>
-                <div className="lg:hidden block"></div>
             </div>
         </article>
     );
 };
 
-export default PostDetailPage;
+export default BlogDetailPage;

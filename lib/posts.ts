@@ -1,50 +1,64 @@
 import fs from 'fs';
 import path from 'path';
+
 import matter from 'gray-matter';
-import { remark } from 'remark';
-import html from 'remark-html';
-import { Post } from '@/app/types/blog';
 import { rehype } from 'rehype';
-import rehypePrism from 'rehype-prism-plus';
-import remarkGfm from 'remark-gfm';
-import remarkToc from 'remark-toc';
+import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
+import { remark } from 'remark';
+import remarkGfm from 'remark-gfm';
+import html from 'remark-html';
+import remarkToc from 'remark-toc';
+// import { Post } from '@/app/types/blog';
+
+import { fetchMarkdownFiles } from './github';
 
 const postsDirectory = path.join(process.cwd(), 'posts/blog');
 
-export const getSortedPostsData = () => {
+export const getSortedPostsData = async () => {
+    // 로컬 Markdown 파일 읽기
     const fileNames = fs.readdirSync(postsDirectory);
-    const allPostsData = fileNames.map((fileName) => {
-        const id = fileName.replace(/\.mdx$/, '');
-
-        // 마크다운 파일 읽기
+    const localPosts = fileNames.map((fileName) => {
+        const id = fileName.replace(/\.(md|mdx)$/, ''); // .md, .mdx 제거
         const fullPath = path.join(postsDirectory, fileName);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-        // metadata 파싱
         const matterResult = matter(fileContents);
-        const slug = matterResult.data.title.toLowerCase().replace(/\s+/g, '-');
 
         return {
             id,
-            slug,
+            slug: id,
+            content: matterResult.content, // 본문 추가
             ...matterResult.data,
         };
-    }) as Post[];
+    });
 
-    // 날짜 순 정렬
-    return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1));
+    // GitHub Markdown 파일 읽기
+    const githubFiles = await fetchMarkdownFiles();
+    const githubPosts = githubFiles.map((file: { name: string; downloadUrl: string }) => ({
+        id: file.name.replace(/\.(md|mdx)$/, ''), // 파일 이름에서 확장자 제거
+        slug: file.name.replace(/\.(md|mdx)$/, ''), // slug로 파일 이름 사용
+        title: file.name.replace(/\.(md|mdx)$/, ''), // 파일 이름을 제목으로 사용
+        date: new Date().toISOString().split('T')[0], // 현재 날짜 사용
+        description: 'This is a post fetched from GitHub.',
+        contentUrl: file.downloadUrl, // raw URL 저장
+    }));
+
+    // 로컬과 GitHub 데이터 병합
+    return [...localPosts, ...githubPosts].sort((a, b) => (a.date < b.date ? 1 : -1));
 };
 
 export const getPostDetailBySlug = async (slug: string) => {
-    const posts = getSortedPostsData();
-    const currentIdx = posts.findIndex((item) => item.slug === slug);
-    const { id = '' } = posts[currentIdx] || {};
+    const allPostsData = await getSortedPostsData();
+    const post = allPostsData.find((item) => item.slug === slug);
 
-    if (currentIdx === -1) return null;
-    const prevPost = posts[currentIdx + 1] || null;
-    const nextPost = posts[currentIdx - 1] || null;
-    const postInfoDetail = await getPostDetailById(id);
+    if (!post) {
+        return null;
+    }
+
+    const prevPost = allPostsData[allPostsData.indexOf(post) + 1] || null;
+    const nextPost = allPostsData[allPostsData.indexOf(post) - 1] || null;
+
+    const postInfoDetail = await getPostDetailById(post.id);
 
     return {
         ...postInfoDetail,
@@ -53,42 +67,63 @@ export const getPostDetailBySlug = async (slug: string) => {
     };
 };
 
-export const getPostDetailById = async (id: string): Promise<Post> => {
-    const fullPath = path.join(postsDirectory, `${id}.mdx`);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
+export const getPostDetailById = async (id: string) => {
+    const allPostsData = await getSortedPostsData();
+    const post = allPostsData.find((item) => item.id === id);
+    console.log('🚀 ~ getPostDetailById ~ post:', post);
+    console.log('🚀 ~ getPostDetailById ~ id:', id);
 
-    // metadata 파싱
-    const matterResult = matter(fileContents);
-    const datas = matterResult.data as {
-        title: string;
-        date: string;
-        description: string;
-        thumbnailUrl: string;
-        tags: string[];
-    };
+    if (!post) {
+        throw new Error(`Post with id "${id}" not found`);
+    }
 
-    // 마크다운 to HTML
-    const contentHtml = await parseMarkdownToHtml(matterResult.content);
+    let contentHtml = '';
+
+    if (post.content) {
+        console.log('🚀 ~ getPostDetailById ~ post:', post);
+        // 로컬 Markdown 파일 처리
+        contentHtml = await parseMarkdownToHtml(post.content);
+    } else if (post.contentUrl) {
+        console.log('🚀 ~ getPostDetailById ~ post:', post);
+        // GitHub Markdown 파일 처리
+        const response = await fetch(post.contentUrl);
+        const markdownContent = await response.text();
+        contentHtml = await parseMarkdownToHtml(markdownContent);
+    }
 
     return {
-        id,
+        ...post,
         contentHtml,
-        ...datas,
     };
 };
 
 const parseMarkdownToHtml = async (markdownContent: string) => {
-    // 1. Markdown -> HTML 변환
+    const options = {
+        theme: 'github-dark', // 테마 설정 (예: 'nord', 'github-dark', 'dracula' 등)
+        keepBackground: true, // 테마의 배경색 유지
+        onVisitLine(node) {
+            // 강조된 라인에 클래스 추가
+            if (node.properties?.className?.includes('highlighted')) {
+                node.properties.className.push('bg-highlight');
+            }
+        },
+        onVisitHighlightedLine(node) {
+            node.properties.className = [...(node.properties.className || []), 'highlighted-line'];
+        },
+        onVisitHighlightedWord(node) {
+            node.properties.className = [...(node.properties.className || []), 'highlighted-word'];
+        },
+    };
+
     const processedContent = await remark()
-        .use(remarkGfm) // GitHub Flavored Markdown 지원
-        .use(remarkToc, { heading: '목차' }) // 목차 생성
+        .use(remarkGfm)
+        .use(remarkToc, { heading: '목차' })
         .use(html)
         .process(markdownContent);
 
-    // 2. HTML 변환된 내용에 슬러그와 코드 하이라이트 추가
     const highlightedContent = await rehype()
-        .use(rehypeSlug) // 헤더에 고유 id 추가
-        .use(rehypePrism) // 코드 하이라이트 추가
+        .use(rehypePrettyCode, options)
+        .use(rehypeSlug) // 헤더에 고유 ID 추가
         .process(processedContent.toString());
 
     return highlightedContent.toString();
