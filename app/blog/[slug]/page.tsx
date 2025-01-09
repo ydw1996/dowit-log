@@ -1,16 +1,15 @@
 import { getPostDetailBySlug, getSortedPostsData } from '@/lib/posts';
 
 export async function generateStaticParams() {
-    const posts = await getSortedPostsData(); // 모든 포스트 데이터 가져오기
+    const posts = await getSortedPostsData();
     return posts.map((post) => ({
         slug: post.slug,
     }));
 }
 
-const BlogDetailPage = async ({ params }: { params: { slug: string } }) => {
-    const { slug } = params;
+const BlogDetailPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+    const { slug } = await params;
 
-    // 슬러그를 사용하여 게시물 데이터 가져오기
     const { id = '', title = '', contentHtml = '', date = '' } =
         (await getPostDetailBySlug(decodeURIComponent(slug))) || {};
 
