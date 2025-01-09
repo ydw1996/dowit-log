@@ -106,23 +106,6 @@ export const getPostDetailById = async (id: string) => {
 };
 
 const parseMarkdownToHtml = async (markdownContent: string) => {
-    const options = {
-        theme: 'github-dark', // 테마 설정 (예: 'nord', 'github-dark', 'dracula' 등)
-        keepBackground: true, // 테마의 배경색 유지
-        onVisitLine(node: { properties: { className: string[] } }) {
-            // 강조된 라인에 클래스 추가
-            if (node.properties?.className?.includes('highlighted')) {
-                node.properties.className.push('bg-highlight');
-            }
-        },
-        onVisitHighlightedLine(node: { properties: { className: string[] } }) {
-            node.properties.className = [...(node.properties.className || []), 'highlighted-line'];
-        },
-        onVisitHighlightedWord(node: { properties: { className: string[] } }) {
-            node.properties.className = [...(node.properties.className || []), 'highlighted-word'];
-        },
-    };
-
     const processedContent = await remark()
         .use(remarkGfm)
         .use(remarkToc, { heading: '목차' })
@@ -130,7 +113,7 @@ const parseMarkdownToHtml = async (markdownContent: string) => {
         .process(markdownContent);
 
     const highlightedContent = await rehype()
-        .use(rehypePrettyCode, options)
+        .use(rehypePrettyCode, { theme: 'github-dark', keepBackground: true }) // 옵션 객체 전달
         .use(rehypeSlug) // 헤더에 고유 ID 추가
         .process(processedContent.toString());
 
