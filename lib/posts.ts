@@ -109,16 +109,16 @@ const parseMarkdownToHtml = async (markdownContent: string) => {
     const options = {
         theme: 'github-dark', // 테마 설정 (예: 'nord', 'github-dark', 'dracula' 등)
         keepBackground: true, // 테마의 배경색 유지
-        onVisitLine(node) {
+        onVisitLine(node: { properties: { className: string[] } }) {
             // 강조된 라인에 클래스 추가
             if (node.properties?.className?.includes('highlighted')) {
                 node.properties.className.push('bg-highlight');
             }
         },
-        onVisitHighlightedLine(node) {
+        onVisitHighlightedLine(node: { properties: { className: string[] } }) {
             node.properties.className = [...(node.properties.className || []), 'highlighted-line'];
         },
-        onVisitHighlightedWord(node) {
+        onVisitHighlightedWord(node: { properties: { className: string[] } }) {
             node.properties.className = [...(node.properties.className || []), 'highlighted-word'];
         },
     };
