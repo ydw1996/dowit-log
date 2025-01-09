@@ -1,13 +1,5 @@
 import { getPostDetailBySlug, getSortedPostsData } from '@/lib/posts';
 
-interface Params {
-    slug: string;
-}
-
-interface PageProps {
-    params: Params;
-}
-
 export async function generateStaticParams() {
     const posts = await getSortedPostsData(); // 모든 포스트 데이터 가져오기
     return posts.map((post) => ({
@@ -15,7 +7,7 @@ export async function generateStaticParams() {
     }));
 }
 
-const BlogDetailPage = async ({ params }: PageProps) => {
+const BlogDetailPage = async ({ params }: { params: { slug: string } }) => {
     const { slug } = params;
 
     // 슬러그를 사용하여 게시물 데이터 가져오기
