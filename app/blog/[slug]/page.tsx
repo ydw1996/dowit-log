@@ -1,7 +1,11 @@
 import { getPostDetailBySlug } from '@/lib/posts';
 
-const BlogDetailPage = async ({ params }: { params: { slug: string } }) => {
-    const { slug } = params;
+type Params = {
+    slug: string;
+};
+
+const BlogDetailPage = async ({ params }: { params: Params }) => {
+    const { slug } = params as { slug: string };
 
     // 슬러그를 사용하여 게시물 데이터 가져오기
     const { id = '', title = '', contentHtml = '', date = '' } =
