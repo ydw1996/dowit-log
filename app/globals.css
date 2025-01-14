@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: theme('colors.basic.white');
-  --foreground: theme('colors.basic.black');
+  --background: theme("colors.bg.dark");
+  --foreground: theme("colors.gray.300");
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --background: theme('colors.bg.dark');
-    --foreground: theme('colors.gray.200');
+    --background: theme("colors.bg.light");
+    --foreground: theme("colors.basic.black");
   }
 }
 
@@ -18,98 +18,111 @@ body {
   @apply text-[var(--foreground)] bg-[var(--background)] font-pretendard;
 }
 
-/* 헤딩 및 디스플레이 스타일 */
+/* 디스플레이 및 헤딩 스타일 */
 .display-bold {
-  @apply text-display font-bold;
+  @apply text-display-lg font-bold;
 }
 
 .display-regular {
-  @apply text-display font-normal;
+  @apply text-display-lg font-normal;
 }
 
-.heading-bold {
-  @apply font-bold;
+.heading-xl {
+  @apply text-heading-xl font-bold;
+}
+
+.heading-lg {
+  @apply text-heading-lg font-semibold;
+}
+
+.heading-md {
+  @apply text-heading-md font-semibold;
+}
+
+.heading-sm {
+  @apply text-heading-sm font-medium;
 }
 
 .heading-light {
   @apply font-light;
 }
 
-/* 예시 */
+/* HTML 요소에 스타일 적용 */
 h1 {
-  @apply text-h1 heading-bold;
+  @apply heading-xl;
 }
 
 h2 {
-  @apply text-h2 heading-bold;
+  @apply heading-lg;
 }
 
 h3 {
-  @apply text-h3 heading-bold;
+  @apply heading-md;
 }
 
 h4 {
-  @apply text-h4 font-semibold;
+  @apply heading-sm;
 }
 
 h5 {
-  @apply text-h5 font-bold;
+  @apply text-body-lg font-bold;
 }
 
 h6 {
-  @apply text-h6;
+  @apply text-body-md;
 }
 
 @layer base {
   * {
-    @apply border-primary-01;
+    @apply text-gray-300;
   }
 }
 
+/* Typography 스타일 */
 .prose {
   @apply text-gray-300;
 }
+
 .prose h1 {
-  @apply text-gray-300 text-h2 font-bold mt-8 mb-4 leading-[54px] break-keep;
+  @apply text-gray-300 text-heading-lg mt-8 mb-4 leading-[1.2] break-keep;
 }
 
 .prose h2 {
-  @apply text-gray-300 text-h3 font-semibold mt-6 mb-3;
+  @apply text-gray-300 text-heading-md mt-6 mb-3;
 }
 
 .prose h3 {
-  @apply text-gray-300 text-h4 font-semibold mt-5 mb-2;
+  @apply text-gray-300 text-heading-sm mt-5 mb-2;
 }
 
 .prose a {
-  @apply text-primary-02 text-h4 font-semibold mt-5 mb-2;
+  @apply text-primary-01  underline hover:text-primary-01;
 }
 
 .prose p {
-  @apply text-gray-300 leading-relaxed mt-4 mb-4;
+  @apply text-body-md leading-relaxed mt-4 mb-4;
 }
 
 .prose strong {
-  @apply text-gray-300;
+  @apply font-bold text-gray-300;
 }
 
 .prose table th,
-.prose table td,
-.prose table tr {
-  @apply text-gray-300; /* 테이블 헤더와 셀 텍스트 색상 */
+.prose table td {
+  @apply text-gray-400;
 }
 
-/* .prose pre {
+.prose pre {
   @apply bg-gray-900 text-white rounded-md p-4 overflow-auto mt-6 mb-6;
-} */
+}
 
-.prose p code {
-  @apply bg-gray-300 text-primary-01 px-1 py-0.5 rounded;
+.prose :not(pre) > code {
+  @apply bg-gray-700 text-blue-600 px-1 py-0.5 rounded-md mx-2;
 }
 
 .prose ul,
 .prose ol {
-  @apply pl-6 mt-4 mb-4;
+  @apply pl-6 mt-4 mb-4 list-disc;
 }
 
 .prose li {
@@ -117,5 +130,5 @@ h6 {
 }
 
 .prose img {
-  @apply mx-auto my-6 max-h-96 rounded-lg shadow-lg;
+  @apply mx-auto my-6 max-h-96 rounded-lg shadow-md;
 }
