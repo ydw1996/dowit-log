@@ -13,7 +13,12 @@ const PostDetail: React.FC<PostDetailProps> = ({
 }) => {
   return (
     <article>
-      <div className="prose mx-5 md:mx-auto mt-12 mb-24 max-w-3xl">
+      <div
+        className="bg-black p-8 prose mx-5 md:mx-auto mt-12 mb-24 max-w-3xl rounded-3xl"
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.3)",
+        }}
+      >
         <div className="mb-7">
           <h2 className="text-4xl font-bold mb-5">{title}</h2>
           <span className="text-gray-500">{date}</span>

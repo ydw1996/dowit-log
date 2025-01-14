@@ -3,6 +3,9 @@ import React from "react";
 
 import Navbar from "@/components/Nav";
 
+import BgCanvas from "./components/BgCanvas";
+import HeaderCanvas from "./components/HeaderCanvas";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,6 +21,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <HeaderCanvas />
+        <BgCanvas />
         <Navbar />
         {children}
       </body>
