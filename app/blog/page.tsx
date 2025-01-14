@@ -2,15 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getLocalPosts } from "@/lib/posts";
+import { Post } from "@/types/post";
 
 const BlogPage = async () => {
-  const localPosts = await getLocalPosts();
+  const localPosts: Post[] = await getLocalPosts();
 
   return (
     <div className="max-w-4xl mx-auto mt-12 px-5 md:px-0">
       <ul className="flex flex-col gap-8">
         {localPosts.map(
-          ({ id, title, slug, date, description, thumbnailUrl }) => (
+          ({ id, title, slug, date, description, thumbnailUrl }: Post) => (
             <Link key={id} href={`/blog/${slug}`}>
               <li className="flex flex-col md:flex-row items-start gap-4">
                 {/* 썸네일 이미지 */}
