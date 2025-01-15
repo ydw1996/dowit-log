@@ -11,6 +11,12 @@ export default function Nav() {
 
   const closeMenu = () => setMenuOpen(false);
 
+  const menuItems = [
+    { label: 'Home', path: '/' },
+    { label: 'Blog', path: '/blog' },
+    { label: 'TIL', path: '/til' },
+  ];
+
   return (
     <nav className="py-4 px-8 bg-gradient-to-r text-white">
       <div className="flex justify-between items-center mx-auto max-w-4xl">
@@ -23,8 +29,17 @@ export default function Nav() {
 
         {/* 데스크탑 메뉴 */}
         <div className="hidden md:flex items-center gap-8">
-          <Link href="/blog">Blog</Link>
-          <Link href="/til">TIL</Link>
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              href={item.path}
+              className={`${
+                pathname === item.path ? 'font-semibold border-b-2 border-primary-02' : ''
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
           <button className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent">
             <Image src="/ico-dark-mode.svg" alt="Dark Mode" width={24} height={24} />
           </button>
@@ -68,7 +83,6 @@ export default function Nav() {
               className="w-8 h-8 flex mr-4 items-center justify-center rounded-full bg-transparent"
               onClick={closeMenu}
             >
-              {/* 닫기 아이콘 */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -82,39 +96,19 @@ export default function Nav() {
             </button>
           </div>
           <ul className="flex flex-col gap-6 text-white text-xl p-8">
-            <li>
-              <Link
-                href="/"
-                onClick={closeMenu}
-                className={`block px-4 py-2 rounded-lg ${
-                  pathname === '/' ? 'bg-primary-01/30' : 'hover:bg-gray-700/30'
-                }`}
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/blog"
-                onClick={closeMenu}
-                className={`block px-4 py-2 rounded-lg ${
-                  pathname === '/blog' ? 'bg-primary-01/30' : 'hover:bg-gray-700/30'
-                }`}
-              >
-                Blog
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/til"
-                onClick={closeMenu}
-                className={`block px-4 py-2 rounded-lg ${
-                  pathname === '/til' ? 'bg-primary-01/30' : 'hover:bg-gray-700/30'
-                }`}
-              >
-                TIL
-              </Link>
-            </li>
+            {menuItems.map((item) => (
+              <li key={item.path}>
+                <Link
+                  href={item.path}
+                  onClick={closeMenu}
+                  className={`block px-4 py-2 rounded-lg ${
+                    pathname === item.path ? 'bg-primary-01/30' : 'hover:bg-gray-700/30'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
