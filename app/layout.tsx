@@ -3,7 +3,7 @@ import React from 'react';
 
 import Navbar from '@/components/Nav';
 
-// import BgCanvas from './components/BgCanvas';
+import BgCanvas from './components/BgCanvas';
 import HeaderCanvas from './components/HeaderCanvas';
 
 import './globals.css';
@@ -22,7 +22,7 @@ export default function RootLayout({
         <html lang="en">
             <body>
                 <HeaderCanvas />
-                {/* <BgCanvas /> */}
+                <BgCanvas />
                 <Navbar />
                 {children}
             </body>
