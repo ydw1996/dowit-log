@@ -74,13 +74,13 @@ h6 {
 
 @layer base {
     * {
-        @apply text-gray-200 font-thin break-keep;
+        @apply text-gray-200 break-keep;
     }
 }
 
 /* Typography 스타일 */
 .prose {
-    @apply text-gray-200;
+    @apply text-gray-200 font-thin;
 }
 
 .prose h1 {
