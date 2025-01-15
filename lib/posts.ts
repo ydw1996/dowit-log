@@ -1,20 +1,20 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
-import matter from "gray-matter";
+import matter from 'gray-matter';
 
-import { fetchMarkdownFiles } from "./github";
-import { parseMarkdownToHtml } from "./markdown";
+import { fetchMarkdownFiles } from './github';
+import { parseMarkdownToHtml } from './markdown';
 
 // 로컬 Markdown 파일
 export const getLocalPosts = () => {
-  const postsDirectory = path.join(process.cwd(), "posts/blog");
+  const postsDirectory = path.join(process.cwd(), 'posts/blog');
   const fileNames = fs.readdirSync(postsDirectory);
 
   const localPosts = fileNames.map((fileName) => {
-    const id = fileName.replace(/\.(md|mdx)$/, "");
+    const id = fileName.replace(/\.(md|mdx)$/, '');
     const fullPath = path.join(postsDirectory, fileName);
-    const fileContents = fs.readFileSync(fullPath, "utf8");
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
     const matterResult = matter(fileContents);
 
     return {
@@ -38,15 +38,13 @@ export const getGitHubPosts = async () => {
       const markdownContent = await response.text();
 
       const titleMatch = markdownContent.match(/^#\s+(.*)$/m);
-      const title = titleMatch
-        ? titleMatch[1]
-        : file.name.replace(/\.(md|mdx)$/, "");
+      const title = titleMatch ? titleMatch[1] : file.name.replace(/\.(md|mdx)$/, '');
 
       return {
-        id: file.name.replace(/\.(md|mdx)$/, ""),
-        slug: file.name.replace(/\.(md|mdx)$/, ""),
+        id: file.name.replace(/\.(md|mdx)$/, ''),
+        slug: file.name.replace(/\.(md|mdx)$/, ''),
         title,
-        date: file.name.replace(/\.(md|mdx)$/, ""),
+        date: file.name.replace(/\.(md|mdx)$/, ''),
         contentUrl: file.downloadUrl,
       };
     })
