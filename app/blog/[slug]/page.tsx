@@ -1,4 +1,4 @@
-import PostDetail from '@/components/PostDetail';
+import PostDetail from '@components/common/PostDetail';
 import { getPostDetailBySlug, getAllPostsData } from '@/lib/posts';
 
 export async function generateStaticParams() {

@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import React from 'react';
 
-import Navbar from '@/components/Nav';
-
-import BgCanvas from './components/BgCanvas';
-import HeaderCanvas from './components/HeaderCanvas';
+import BgCanvas from '@components/layout/BgCanvas';
+import HeaderCanvas from '@components/layout/HeaderCanvas';
+import Navbar from '@components/layout/Nav';
 
 import './globals.css';
 
