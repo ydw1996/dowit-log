@@ -1,18 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
-export const Tags = () => {
-  const [activeTag, setActiveTag] = useState('React'); // 기본 활성 태그
+interface TagProps {
+  tags: string[];
+  activeTag: string;
+  setActiveTag: (tag: string) => void;
+}
 
-  const tags = ['React', 'Etc', 'Vue', 'Javascript'];
-
+const Tags: React.FC<TagProps> = ({ tags, activeTag, setActiveTag }) => {
   return (
     <div className="flex justify-center gap-4 mt-6">
       {tags.map((tag) => (
         <button
           key={tag}
-          onClick={() => setActiveTag(tag)} // 클릭 시 활성화 태그 설정
+          onClick={() => setActiveTag(tag)}
           className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
             activeTag === tag
               ? 'bg-primary-01 text-white'
@@ -25,3 +27,5 @@ export const Tags = () => {
     </div>
   );
 };
+
+export default Tags;
