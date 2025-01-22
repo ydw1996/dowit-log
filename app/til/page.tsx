@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { CountUp } from '@/components/common/CountUp';
 import { getGitHubPosts } from '@/lib/posts';
 import { Post } from '@/types/post';
 
@@ -14,27 +15,21 @@ const formatDate = (dateString: string) => {
   }).format(date);
 };
 
-// 첫 번째 <p> 또는 <li> 태그를 추출하는 함수
-const extractFirstContent = (contentHtml: string | undefined) => {
-  if (!contentHtml) return '';
-
-  // 첫 번째 <p> 태그 또는 <li> 태그 내용 추출
-  const match = contentHtml.match(/<(p|li)>(.*?)<\/\1>/i); // <p> 또는 <li> 태그 탐지
-  return match ? match[2] : ''; // 태그 내용 반환
-};
-
 const TILPage = async () => {
   const tilPosts: Post[] = await getGitHubPosts();
 
   return (
     <div className="max-w-4xl mx-auto my-12 px-5 md:px-0">
       {/* 상단 Intro 섹션 */}
-      <div className="text-center mb-24">
-        <h1 className="text-4xl font-bold text-white mb-4">Today I Learn</h1>
+      <div className="text-center mb-24 flex flex-col items-center gap-6">
+        <div className="flex items-center gap-4">
+          <h1 className="text-4xl font-bold text-white">Today I Learn :</h1>
+          <CountUp targetCount={tilPosts.length} />
+        </div>
         <p className="text-gray-400 text-lg">
           매일 조금씩 더 나아가는 과정의 기록, 작은 배움이 모여 큰 성장을 만듭니다.
         </p>
-        <div className="mt-6 flex items-center justify-center">
+        <div className="flex items-center justify-center">
           <Link href="https://github.com/ydw1996/TIL" target="_blank" rel="noopener noreferrer">
             <button className="flex items-center px-6 py-3 text-sm font-medium text-white bg-primary-01 hover:bg-primary-02 rounded-lg transition">
               {/* 깃허브 로고 추가 */}
@@ -55,37 +50,30 @@ const TILPage = async () => {
           </Link>
         </div>
       </div>
-      <ul className="flex flex-col">
-        {tilPosts.map(({ id, title, slug, date, contentHtml }: Post) => {
-          const contentPreview = extractFirstContent(contentHtml); // 컨텐츠 내용 추출
 
-          return (
-            <Link key={id} href={`/til/${slug}`}>
-              <li className="flex items-start gap-10 group cursor-pointer">
-                {/* Date Section */}
-                <div
-                  className="text-primary-gray text-sm font-light min-w-[140px] text-right"
-                  style={{ flexShrink: 0 }}
-                >
-                  {formatDate(date)}
-                </div>
+      {/* 게시물 목록 */}
+      <ul className="flex flex-col gap-8">
+        {tilPosts.map(({ id, title, slug, date }: Post) => (
+          <Link key={id} href={`/til/${slug}`}>
+            <li className="flex items-start gap-10 group cursor-pointer">
+              {/* Date Section */}
+              <div className="text-primary-gray text-sm font-light min-w-[140px] text-right">
+                {formatDate(date)}
+              </div>
 
-                {/* Line and Circle */}
-                <div className="flex flex-col items-center">
-                  <div className="w-[9px] h-[9px] rounded-full border-[2px] border-gray-500 group-hover:bg-primary-01"></div>
-                  <div className="h-40 w-[0.2px] bg-gray-600 opacity-50"></div>
-                  <div className="flex-1 w-[0.25px] bg-gray-500"></div>
-                </div>
+              {/* Line and Circle */}
+              <div className="flex flex-col items-center">
+                <div className="w-[9px] h-[9px] rounded-full border-[2px] border-gray-500 group-hover:bg-primary-01"></div>
+                <div className="h-40 w-[0.2px] bg-gray-600 opacity-50"></div>
+              </div>
 
-                {/* Content Section */}
-                <div className="flex-1 rounded-xl p-4 bg-opacity-10 group-hover:bg-primary-01/20 transition-all duration-200 ease-in-out">
-                  <p className="text-xl font-normal mb-2 text-white">{title}</p>
-                  {contentPreview && <p className="text-gray-500 text-sm">{contentPreview}</p>}
-                </div>
-              </li>
-            </Link>
-          );
-        })}
+              {/* Content Section */}
+              <div className="flex-1 rounded-xl p-4 bg-opacity-10 group-hover:bg-primary-01/20 transition-all duration-200 ease-in-out">
+                <p className="text-xl font-normal mb-2 text-white">{title}</p>
+              </div>
+            </li>
+          </Link>
+        ))}
       </ul>
     </div>
   );
