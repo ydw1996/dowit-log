@@ -23,7 +23,7 @@ const TILPage = async () => {
             {/* 상단 Intro 섹션 */}
             <div className="text-center mb-24 flex flex-col items-center gap-6">
                 <div className="flex items-center gap-4">
-                    <h1 className="text-4xl font-bold text-white">Today I Learn :</h1>
+                    <h1 className="text-4xl font-semibold text-white">Today I Learn :</h1>
                     <CountUp targetCount={tilPosts.length} />
                 </div>
                 <p className="text-gray-400 text-lg">
