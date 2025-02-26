@@ -68,7 +68,7 @@ const TILPage = async () => {
 
                                 {/* 최신 게시물이면 "Latest" 배지 추가 */}
                                 {index === 0 && (
-                                    <span className="mt-4 px-4 py-1 text-sm font-semibold text-primary-02 bg-primary-02/30 rounded-full">
+                                    <span className="mt-4 px-4 py-1 text-sm font-semibold text-blue-500 bg-primary-02/30 rounded-full">
                                         Latest
                                     </span>
                                 )}
