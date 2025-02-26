@@ -20,10 +20,10 @@ const formatDate = (dateString: string) => {
 
 const PostDetail: React.FC<PostDetailProps> = ({ date, contentHtml }) => {
     return (
-        <article>
-            <div className="bg-black/40 backdrop-blur-lg p-10 prose mx-auto mt-12 mb-24 max-w-4xl rounded-3xl">
+        <article className="flex align-center justify-center mx-auto mt-12 mb-24">
+            <div className="relative flex gap-8 p-4 max-w-4xl">
                 <ReactionBar />
-                <div className="mb-7">
+                <div className="bg-black/40 backdrop-blur-lg p-10 prose max-w-4xl rounded-3xl">
                     <span className="px-5 py-2 text-gray-300 bg-primary-01/50 rounded-2xl">
                         {formatDate(date)}
                     </span>
