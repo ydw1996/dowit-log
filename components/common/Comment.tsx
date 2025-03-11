@@ -41,7 +41,7 @@ const CommentSection = forwardRef<HTMLElement>((_, ref) => {
       {/* 댓글 헤더 */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-semibold text-white">Top comments ({comments.length})</h1>
-        <button className="text-gray-400 text-sm hover:text-white transition">Subscribe</button>
+        {/* <button className="text-gray-400 text-sm hover:text-white transition">Subscribe</button> */}
       </div>
 
       {/* 댓글 입력창 */}

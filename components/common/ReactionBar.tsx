@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { BsChat, BsHeart } from 'react-icons/bs';
+import { TbShare3 } from 'react-icons/tb';
 
 import styles from '@/styles/animations.module.css';
 
@@ -129,6 +130,10 @@ const ReactionBar: React.FC<ReactionBarProps> = ({ scrollToComments }) => {
           </div>
           <span className="text-gray-400 text-sm">2</span>
         </li>
+        {/* 공유 아이콘 */}
+        {/* <li className="relative flex flex-col items-center cursor-pointer select-none">
+          <TbShare3 className="w-6 h-6 text-gray-400 transition-colors duration-300 hover:text-primary-01" />
+        </li> */}
       </ul>
     </div>
   );
