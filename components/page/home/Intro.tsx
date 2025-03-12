@@ -6,19 +6,19 @@ import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import * as THREE from 'three';
 
-// 정확한 면 순서 맞추기
+// 면 정보 배열 (텍스트, URL, 고유 ID)
 const faces = [
-  { text: 'Home', url: '/' }, // Front (z+)
-  { text: 'About', url: '/about' }, // Back (z-)
-  { text: 'Projects', url: '/projects' }, // Left (x-)
-  { text: 'Contact', url: '/contact' }, // Right (x+)
-  { text: 'Blog', url: '/blog' }, // Top (y+)
-  { text: 'Gallery', url: '/gallery' }, // Bottom (y-)
+  { text: 'Home', url: '/', id: 'face-0' },
+  { text: 'About', url: '/about', id: 'face-1' },
+  { text: 'Portfolio', url: 'https://david-portfolio-96.netlify.app', id: 'face-2' },
+  { text: 'Contact', url: '/contact', id: 'face-3' },
+  { text: 'Blog', url: '/blog', id: 'face-4' },
+  { text: 'Gallery', url: '/gallery', id: 'face-5' },
 ];
 
-const Cube = ({ onFaceClick }: { onFaceClick: (index: number) => void }) => {
+const Cube = ({ onFaceClick }: { onFaceClick: (url: string) => void }) => {
   const cubeRef = useRef<THREE.Mesh>(null);
-  const [hoveredFace, setHoveredFace] = useState<number | null>(null);
+  const [hoveredFace, setHoveredFace] = useState<string | null>(null);
 
   useFrame(() => {
     if (cubeRef.current) {
@@ -31,57 +31,59 @@ const Cube = ({ onFaceClick }: { onFaceClick: (index: number) => void }) => {
     <mesh
       ref={cubeRef}
       onPointerMove={(event) => {
-        if (event.face) {
-          setHoveredFace(event.face.materialIndex);
-        }
+        const face = faces[event.face?.materialIndex ?? -1];
+        if (face) setHoveredFace(face.id);
       }}
       onPointerOut={() => setHoveredFace(null)}
       onClick={(event) => {
-        if (!event.object.geometry.groups) return;
-        const faceIndex = event.object.geometry.groups.findIndex(
-          (group) => group.materialIndex === event.face?.materialIndex
-        );
+        if (!event.face) return;
 
-        if (faceIndex !== -1) onFaceClick(faceIndex);
+        const face = faces[event.face.materialIndex ?? -1]; // 클릭한 면의 정보 가져오기
+        console.log('Clicked face:', face?.text, 'Navigating to:', face?.url);
+        if (face) {
+          onFaceClick(face.url);
+        }
       }}
     >
       <boxGeometry args={[4, 4, 4]} />
-      {faces.map(({ text }, index) => (
+      {faces.map(({ id }, index) => (
         <meshStandardMaterial
-          key={index}
+          key={id}
           attach={`material-${index}`}
-          color={hoveredFace === index ? '#2E42D1' : '#000000'}
+          transparent={true}
+          opacity={0.8}
+          color={hoveredFace === id ? '#2E42D1' : '#000000'}
         />
       ))}
 
       {/* ✅ 테두리 추가 */}
       <lineSegments>
         <edgesGeometry args={[new THREE.BoxGeometry(4.05, 4.05, 4.05)]} />
-        <lineBasicMaterial color="white" linewidth={2} />
+        <lineBasicMaterial color="gray" linewidth={2} />
       </lineSegments>
 
-      {/* ✅ 텍스트 추가 (각 면 중앙 배치) */}
-      {faces.map(({ text }, index) => {
-        const positions = [
+      {/* ✅ 텍스트 추가 */}
+      {faces.map(({ text, id }, index) => {
+        const positions: [number, number, number][] = [
           [0, 0, 2.01], // Front (z+)
           [0, 0, -2.01], // Back (z-)
           [-2.01, 0, 0], // Left (x-)
           [2.01, 0, 0], // Right (x+)
           [0, 2.01, 0], // Top (y+)
           [0, -2.01, 0], // Bottom (y-)
-        ];
+        ] as const; // ← `as const` 추가!
 
-        const rotations = [
-          [0, 0, 0], // 정면
-          [0, Math.PI, 0], // 후면
-          [0, Math.PI / 2, 0], // 좌측
-          [0, -Math.PI / 2, 0], // 우측
-          [-Math.PI / 2, 0, 0], // 위
-          [Math.PI / 2, 0, 0], // 아래
-        ];
+        const rotations: [number, number, number][] = [
+          [0, 0, 0], // Front
+          [0, Math.PI, 0], // Back
+          [0, Math.PI / -2, 0], // Left
+          [0, -Math.PI / -2, 0], // Right
+          [-Math.PI / 2, 0, 0], // Top
+          [Math.PI / 2, 0, 0], // Bottom
+        ] as const;
 
         return (
-          <group key={index} position={positions[index]} rotation={rotations[index]}>
+          <group key={id} position={positions[index]} rotation={rotations[index]}>
             <Text
               fontSize={0.6}
               color="white"
@@ -101,11 +103,9 @@ const Cube = ({ onFaceClick }: { onFaceClick: (index: number) => void }) => {
 const CubeScene = () => {
   const router = useRouter();
 
-  const handleFaceClick = (index: number) => {
-    console.log(`Clicked face index: ${index}, Navigating to: ${faces[index].url}`);
-    if (faces[index]) {
-      router.push(faces[index].url);
-    }
+  const handleFaceClick = (url: string) => {
+    console.log(`Navigating to: ${url}`);
+    router.push(url);
   };
 
   return (
