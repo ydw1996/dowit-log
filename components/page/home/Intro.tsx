@@ -21,9 +21,10 @@ const Cube = ({ onFaceClick }: { onFaceClick: (url: string) => void }) => {
   const [hoveredFace, setHoveredFace] = useState<string | null>(null);
 
   useFrame(() => {
+    // 큐브 회전 속도
     if (cubeRef.current) {
-      cubeRef.current.rotation.y += 0.004;
-      cubeRef.current.rotation.x += 0.002;
+      cubeRef.current.rotation.y += 0.002;
+      cubeRef.current.rotation.x += 0.001;
     }
   });
 
@@ -51,7 +52,7 @@ const Cube = ({ onFaceClick }: { onFaceClick: (url: string) => void }) => {
           key={id}
           attach={`material-${index}`}
           transparent={true}
-          opacity={0.8}
+          opacity={0.7}
           color={hoveredFace === id ? '#2E42D1' : '#000000'}
         />
       ))}
@@ -59,7 +60,7 @@ const Cube = ({ onFaceClick }: { onFaceClick: (url: string) => void }) => {
       {/* ✅ 테두리 추가 */}
       <lineSegments>
         <edgesGeometry args={[new THREE.BoxGeometry(4.05, 4.05, 4.05)]} />
-        <lineBasicMaterial color="gray" linewidth={2} />
+        <lineBasicMaterial color="#2E42D1" linewidth={2} />
       </lineSegments>
 
       {/* ✅ 텍스트 추가 */}
