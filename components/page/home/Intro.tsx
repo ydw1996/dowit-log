@@ -17,44 +17,67 @@ const faces = [
 ];
 
 const Cube = ({ onFaceClick }: { onFaceClick: (url: string) => void }) => {
-  const cubeRef = useRef<THREE.Mesh>(null);
+  // 큐브 그룹 참고 useRef 훅
+  const cubeRef = useRef<THREE.Group>(null);
+  // 현재 호버된 면의 ID를 저장하는 상태 값
   const [hoveredFace, setHoveredFace] = useState<string | null>(null);
 
+  // useFrame : 매 프레임마다 큐브를 회전
   useFrame(() => {
-    // 큐브 회전 속도
     if (cubeRef.current) {
-      cubeRef.current.rotation.y += 0.002;
-      cubeRef.current.rotation.x += 0.001;
+      cubeRef.current.rotation.y += 0.002; // Y축으로 회전
+      cubeRef.current.rotation.x += 0.001; // X축으로 회전
     }
   });
 
-  return (
-    <mesh
-      ref={cubeRef}
-      onPointerMove={(event) => {
-        const face = faces[event.face?.materialIndex ?? -1];
-        if (face) setHoveredFace(face.id);
-      }}
-      onPointerOut={() => setHoveredFace(null)}
-      onClick={(event) => {
-        if (!event.face) return;
+  // 각 면의 위치 (position) 설정 (큐브의 각 면을 바깥으로 배치)
+  const positions: [number, number, number][] = [
+    [0, 0, 2.01], // 앞면 (z+)
+    [0, 0, -2.01], // 뒷면 (z-)
+    [-2.01, 0, 0], // 왼쪽 (x-)
+    [2.01, 0, 0], // 오른쪽 (x+)
+    [0, 2.01, 0], // 윗면 (y+)
+    [0, -2.01, 0], // 아랫면 (y-)
+  ];
 
-        const face = faces[event.face.materialIndex ?? -1]; // 클릭한 면의 정보 가져오기
-        console.log('Clicked face:', face?.text, 'Navigating to:', face?.url);
-        if (face) {
-          onFaceClick(face.url);
-        }
-      }}
-    >
-      <boxGeometry args={[4, 4, 4]} />
-      {faces.map(({ id }, index) => (
-        <meshStandardMaterial
+  // 각 면 회전 (rotation) 설정 (텍스트 방향을 맞추기 위해 필요)
+  const rotations: [number, number, number][] = [
+    [0, 0, 0], // 앞면 정면
+    [0, Math.PI, 0], // 뒷면 180도 회전
+    [0, Math.PI / -2, 0], // 왼쪽 -90도 회전
+    [0, -Math.PI / -2, 0], // 오른쪽 +90도 회전
+    [-Math.PI / 2, 0, 0], // 윗면 -90도 회전
+    [Math.PI / 2, 0, 0], // 아랫면 +90도 회전
+  ];
+
+  return (
+    <group ref={cubeRef}>
+      {faces.map(({ text, id, url }, index) => (
+        <mesh
           key={id}
-          attach={`material-${index}`}
-          transparent={true}
-          opacity={0.7}
-          color={hoveredFace === id ? '#2E42D1' : '#000000'}
-        />
+          position={positions[index]} // 면의 위치 설정
+          rotation={rotations[index]} // 면의 회전 설정
+          onPointerMove={() => setHoveredFace(id)}
+          onPointerOut={() => setHoveredFace(null)}
+          onClick={() => onFaceClick(url)}
+        >
+          <planeGeometry args={[4, 4]} />
+          <meshStandardMaterial
+            transparent={true} // 투명도 활성화
+            opacity={0.7}
+            color={hoveredFace === id ? '#2E42D1' : '#000000'}
+          />
+
+          <Text
+            fontSize={0.6} // 텍스트 크기 설정
+            color="white" // 텍스트 색상 설정
+            anchorX="center" // X축 기준으로 가운데 정렬
+            anchorY="middle" // Y축 기준으로 가운데 정렬
+            position={[0, 0, 0.05]} // 텍스트 위치 (살짝 앞으로 배치)
+          >
+            {text}
+          </Text>
+        </mesh>
       ))}
 
       {/* ✅ 테두리 추가 */}
@@ -62,42 +85,7 @@ const Cube = ({ onFaceClick }: { onFaceClick: (url: string) => void }) => {
         <edgesGeometry args={[new THREE.BoxGeometry(4.05, 4.05, 4.05)]} />
         <lineBasicMaterial color="#2E42D1" linewidth={2} />
       </lineSegments>
-
-      {/* ✅ 텍스트 추가 */}
-      {faces.map(({ text, id }, index) => {
-        const positions: [number, number, number][] = [
-          [0, 0, 2.01], // Front (z+)
-          [0, 0, -2.01], // Back (z-)
-          [-2.01, 0, 0], // Left (x-)
-          [2.01, 0, 0], // Right (x+)
-          [0, 2.01, 0], // Top (y+)
-          [0, -2.01, 0], // Bottom (y-)
-        ] as const; // ← `as const` 추가!
-
-        const rotations: [number, number, number][] = [
-          [0, 0, 0], // Front
-          [0, Math.PI, 0], // Back
-          [0, Math.PI / -2, 0], // Left
-          [0, -Math.PI / -2, 0], // Right
-          [-Math.PI / 2, 0, 0], // Top
-          [Math.PI / 2, 0, 0], // Bottom
-        ] as const;
-
-        return (
-          <group key={id} position={positions[index]} rotation={rotations[index]}>
-            <Text
-              fontSize={0.6}
-              color="white"
-              anchorX="center"
-              anchorY="middle"
-              rotation={[0, 0, 0]}
-            >
-              {text}
-            </Text>
-          </group>
-        );
-      })}
-    </mesh>
+    </group>
   );
 };
 
