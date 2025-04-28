@@ -41,7 +41,7 @@ const faces = [
         text: 'Project',
         url: '/project',
         id: 'face-5',
-        description: 'Image Gallery',
+        description: 'Project Page',
         image: '/example6.gif',
     },
 ];
